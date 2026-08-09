@@ -1,8 +1,11 @@
-let numberA = undefined;
-let numberB = undefined;
-let operator = undefined;
+let numberA = 0;
+let numberB = 0;
+let operator = "";
 
 let numberField = document.getElementById("numberField");
+let decimalKey = document.getElementById("decimal");
+const numberKeys = document.querySelectorAll(".number");
+
 
 function add(a, b) {
     return a + b;
@@ -25,44 +28,55 @@ function operate(a, b, operator) {
         return add(a, b);
     } else if (operator === "-") {
         return subtract(a, b);
-    } else if (operator === "*") {
+    } else if (operator === "\u00D7") {
         return multiply(a, b);
-    } else if (operator === "/") {
+    } else if (operator === "\u00F7") {
         return divide(a, b);
     }
 }
 
-function updateDisplay() {
-    x = undefined;
+function updateNumberA() {
+    let decimalKeyFlag = false;
 
-    // Logic for decimal numbers
-    decimalKey = document.getElementById("decimal");
-    decimalKeyFlag = false;
     decimalKey.addEventListener("click", (e) => {
-        if (x === undefined || x === "0") {
-            x = "0.";
-            numberField.textContent = x;
-            decimalFlag = true;
-        } else {
-            if (x.at(-1) === ".") {
-                x = x.slice(0, -1);
-                numberField.textContent = x;
-                decimalFlag = false;
+        if (decimalKeyFlag === false) {
+            if (numberField.textContent.length < 10) {
+                numberField.textContent = numberField.textContent.concat(".");
+                numberA = parseFloat(numberField.textContent);
+                decimalKeyFlag = true;
             }
         }
+
+        else if (decimalKeyFlag === true) {
+            if (numberField.textContent.at(-1) === ".") {
+                numberField.textContent = numberField.textContent.slice(0, -1);
+                numberA = parseFloat(numberField.textContent);
+                decimalKeyFlag = false;
+            }
+        }
+
+        console.log(`Number A is ${numberA}`);
     })
 
-    const numberKeys = document.querySelectorAll(".number");
+    const clearKey = document.getElementById("clear");
+    clearKey.addEventListener("click", (e) => {
+        numberField.textContent = "0";
+        numberA = parseFloat(numberField.textContent);
+        decimalKeyFlag = false;
+        console.log(`Number A is ${numberA}`);
+    })
+
     numberKeys.forEach((element) => element.addEventListener("click", (e) => {
-        if (x === undefined || x === "0") {
-            x = element.textContent;
-            numberField.textContent = x;
+        if (numberField.textContent === "0") {
+            numberField.textContent = element.textContent;
+            numberA = parseFloat(numberField.textContent);
         } else {
-            x += element.textContent;
-            numberField.textContent = x;
+            numberField.textContent = numberField.textContent.concat(element.textContent);
+            numberA = parseFloat(numberField.textContent);
         }
-        console.log(x);
-    }));
+
+        console.log(`Number A is ${numberA}`);
+    }))
 }
 
-updateDisplay();
+updateNumberA();
